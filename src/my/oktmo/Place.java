@@ -28,4 +28,10 @@ public class Place {
   private long code;
   private String status;
   private String name;
+
+  @Override
+  public String toString(){
+    return code + " " + status + " " + name;
+
+  }
 }

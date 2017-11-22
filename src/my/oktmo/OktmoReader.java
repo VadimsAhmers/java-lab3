@@ -15,7 +15,7 @@ public class OktmoReader {
             String s;
             while ((s=br.readLine()) !=null ) { // пока readLine() возвращает не null
                 lineCount++;
-                //if (lineCount==100) break;
+                if (lineCount==100000) break;
 
                 String[] stringArray = s.split(";");
 
@@ -27,17 +27,13 @@ public class OktmoReader {
                     codeString +=stringArray[i];
 
                 Long code = Long.parseLong(codeString.replace("\"", ""));
-                String status = stringArray[6].substring(1,2);
-                String name = stringArray[6].substring(3);
 
-                Place place = new Place();
-                place.setCode(code);
-                place.setName(name);
-                place.setStatus(status);
+                String[] rawStatusPlusName = stringArray[6].replace("\"", "").split(" ", 2);
 
-                data.places.add(place);
+                String status = rawStatusPlusName[0];
+                String name = rawStatusPlusName[1];
 
-                System.out.println(place.getStatus() + " " + place.getName() + lineCount);
+                addPlace(code, status, name, data);
 
                 }
         }
@@ -46,7 +42,18 @@ public class OktmoReader {
             ex.printStackTrace();
         }
 
+    }
 
+    public void addPlace(Long code, String status, String name, OktmoData data){
+
+        Place place = new Place();
+        place.setCode(code);
+        place.setName(name);
+        place.setStatus(status);
+
+        data.places.add(place);
+
+        //System.out.println(place.getStatus() + " " + place.getName());
     }
  
 }

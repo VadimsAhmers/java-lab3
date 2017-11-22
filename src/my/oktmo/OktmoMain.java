@@ -14,6 +14,8 @@ public class OktmoMain {
      OktmoReader reader = new OktmoReader();
 
      reader.readPlaces("data-201710.csv", data);
+
+     data.printContent();
  }
  
 }
