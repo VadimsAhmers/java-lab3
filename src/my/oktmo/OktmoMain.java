@@ -1,10 +1,4 @@
-
 package my.oktmo;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class OktmoMain {
 
@@ -15,7 +9,16 @@ public class OktmoMain {
 
      reader.readPlaces("data-201710.csv", data);
 
-     data.printContent();
+     //data.printContent();
+     System.out.println(data.allStatuses);
+     data.sortPlaces();
+
+     /*for (Place p : data.sortedPlaces)
+     System.out.println(p);*/
+
+     OktmoAnalyzer analyzer = new OktmoAnalyzer();
+     //analyzer.findPlacesSixLettersOrLesser(data);
+     //analyzer.findPlacesBeginningAndEndingTheSameConsonant(data);
  }
- 
+
 }

@@ -1,6 +1,6 @@
 package my.oktmo;
 
-public class Place {
+public class Place{
   public long getCode() {
     return code;
   }
@@ -34,4 +34,15 @@ public class Place {
     return code + " " + status + " " + name;
 
   }
+/*
+  @Override
+  public int compareTo(Object obj){
+    Place comparedPlace = (Place) obj;
+
+    int result = name.compareTo(comparedPlace.name);
+    if (result !=0) return result;
+
+    return (code > comparedPlace.code? 1 :-1);
+
+  }*/
 }
