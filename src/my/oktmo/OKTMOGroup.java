@@ -1,8 +1,9 @@
 package my.oktmo;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class OKTMOGroup {
+public class OKTMOGroup extends GroupsAndPlaces{
 
     enum OKTMOLevel {
 
@@ -12,12 +13,12 @@ public class OKTMOGroup {
     }
 
     OKTMOLevel level;
-    String name;
-    long code;
-    List<OKTMOGroup> innerGroups;
+    List<GroupsAndPlaces> innerGroups;  // список групп, вложенных в данную группу
 
-    public OKTMOGroup(OKTMOLevel level) {
-        this.level = level;
+    public OKTMOGroup(long code, String name) {
+        this.code = code;
+        this.name = name;
+        innerGroups = new ArrayList<>();
     }
 }
 

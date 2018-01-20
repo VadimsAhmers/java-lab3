@@ -1,5 +1,7 @@
 package my.oktmo;
 
+import my.oktmo.OKTMOGroup.OKTMOLevel;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,6 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OktmoReader {
+
+
+    OKTMOLevel previousLevel = OKTMOLevel.LEVEL2_KRAI_OBL_RESP;
+    OKTMOGroup currentLevel2Group;
+    OKTMOGroup currentLevel3Group;
+    OKTMOGroup currentLevel4Group;
 
     /*  Общий метод для чтения строк
      *  Читает строки, распознает уровень иерархии муниципальных образований
@@ -47,7 +55,11 @@ public class OktmoReader {
 
                 if (matcher.matches()) {
                     name = stringArray[6];
-                    if (isGroup) addGroup(data, code, name);
+
+                    if (isGroup) {
+                        addGroup(new OKTMOGroup(code, name), data);
+                        continue;
+                    }
                 }
                 else {
                     String[] rawStatusPlusName = stringArray[6].split(" ", 2);
@@ -69,36 +81,47 @@ public class OktmoReader {
 
     }
 
-    private void addGroup(OktmoData data, long code, String name) {
+    private void addGroup(OKTMOGroup group, OktmoData data) {
 
-        OKTMOGroup.OKTMOLevel level;
-        int type = parseType(code);
+        int type = parseType(group.code);
 
         switch (type){
-            case 2: level = OKTMOGroup.OKTMOLevel.LEVEL2_KRAI_OBL_RESP;
+            case 2: group.level = OKTMOLevel.LEVEL2_KRAI_OBL_RESP;
 
                     // Нормализация наименования субъекта РФ
-                    if (name.contains("Городские округа"))
-                        name = name.replace("Городские округа ", "");
-                    if (name.contains("Муниципальные образования"))
-                        name = name.replace("Муниципальные образования ", "");
-                    if (name.contains("Муниципальные районы"))
-                        name = name.replace("Муниципальные районы ", "");
-                    if (name.contains("и городские округа"))
-                        name = name.replace("и городские округа ", "");
+                    if (group.name.contains("Городские округа"))
+                        group.name = group.name.replace("Городские округа ", "");
+                    if (group.name.contains("Муниципальные образования"))
+                        group.name = group.name.replace("Муниципальные образования ", "");
+                    if (group.name.contains("Муниципальные районы"))
+                        group.name = group.name.replace("Муниципальные районы ", "");
+                    if (group.name.contains("и городские округа"))
+                        group.name = group.name.replace("и городские округа ", "");
 
-                    data.level2.put(code, name);
+                    data.level2.put(group.code, group);
                     break;
 
-            case 3: level = OKTMOGroup.OKTMOLevel.LEVEL3_RAYON_GOROKRUG;
-                    data.level3.put(code, name);
+            case 3: group.level = OKTMOLevel.LEVEL3_RAYON_GOROKRUG;
+                    data.level3.put(group.code, group);
                     break;
-            case 4: level = OKTMOGroup.OKTMOLevel.LEVEL4_POSELENIE;
-            data.level4.put(code, name);
+            case 4: group.level = OKTMOLevel.LEVEL4_POSELENIE;
+            data.level4.put(group.code, group);
             break;
 
+            }
+
+        switch (group.level){
+            case LEVEL2_KRAI_OBL_RESP: currentLevel2Group = group;
+                    break;
+            case LEVEL3_RAYON_GOROKRUG: currentLevel3Group = group;
+                    currentLevel2Group.innerGroups.add(group);
+                    break;
+            case LEVEL4_POSELENIE:currentLevel4Group = group;
+                    currentLevel3Group.innerGroups.add(group);
+
         }
-    }
+
+        }
 
     private int parseType(long code) {
 
@@ -123,11 +146,13 @@ public class OktmoReader {
     public void addPlace(Long code, String status, String name, OktmoData data){
 
         Place place = new Place();
-        place.setCode(code);
-        place.setName(name);
+        place.code =code;
+        place.name = name;
         place.setStatus(status);
 
         data.places.add(place);
+
+        currentLevel4Group.innerGroups.add(place);
 
         //System.out.println(place.getStatus() + " " + place.getName());
     }

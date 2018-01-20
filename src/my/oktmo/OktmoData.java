@@ -9,6 +9,11 @@ public class OktmoData {
 
     Set<String> allStatuses = new TreeSet<>();
 
+    Map<Long, OKTMOGroup> level2 = new HashMap<>();
+    Map<Long, OKTMOGroup> level3 = new HashMap<>();
+    Map<Long, OKTMOGroup> level4 = new HashMap<>();
+
+
     public void printContent(){
 
         for (Place place : places)
