@@ -32,15 +32,4 @@ public class Place extends GroupsAndPlaces{
     return code + " " + status + " " + name;
 
   }
-/*
-  @Override
-  public int compareTo(Object obj){
-    Place comparedPlace = (Place) obj;
-
-    int result = name.compareTo(comparedPlace.name);
-    if (result !=0) return result;
-
-    return (code > comparedPlace.code? 1 :-1);
-
-  }*/
 }

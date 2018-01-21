@@ -21,11 +21,11 @@ public class OktmoMain {
      OktmoAnalyzer analyzer = new OktmoAnalyzer();
      //analyzer.findPlacesSixLettersOrLesser(data);
      //analyzer.findPlacesBeginningAndEndingTheSameConsonant(data);
-     for (Map.Entry<Long, OKTMOGroup> entry : data.level4.entrySet())
+     for (Map.Entry<Long, OKTMOGroup> entry : data.level2.entrySet())
      System.out.println(entry.getValue().name);
 
-     for (GroupsAndPlaces groups : reader.currentLevel4Group.innerGroups)
-         System.out.println(groups.name);
+    //for (GroupsAndPlaces groups : reader.currentLevel4Group.innerGroups)
+      // System.out.println(groups.code + " " + groups.name);
  }
 
 }
