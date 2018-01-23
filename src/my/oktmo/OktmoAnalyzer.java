@@ -35,27 +35,42 @@ public class OktmoAnalyzer {
         List<Place> innerPlaces = new ArrayList<>();
 
         switch (group.level){
-            case LEVEL2_KRAI_OBL_RESP: for (OKTMOGroup rayon: group.innerGroups) innerPlaces = findPlacesInRayon(rayon, innerPlaces);
+            case LEVEL2_KRAI_OBL_RESP: for (OKTMOGroup rayon: group.innerGroups)
+                innerPlaces = findPlacesInRayonWithoutStreams(rayon, innerPlaces);
                 //innerPlaces = findPlacesInRayon(rayon, innerPlaces).stream().collect(Collectors.toList());
-            case LEVEL3_RAYON_GOROKRUG: innerPlaces = findPlacesInRayon(group, innerPlaces);
+            case LEVEL3_RAYON_GOROKRUG: innerPlaces = findPlacesInRayonWithoutStreams(group, innerPlaces);
                                         break;
-            case LEVEL4_POSELENIE: innerPlaces = group.innerPlaces;
+            case LEVEL4_POSELENIE: innerPlaces = Collections.unmodifiableList(group.innerPlaces);
                                     break;
         }
         return innerPlaces;
     }
 
-    List<Place> findPlacesInRayon(OKTMOGroup rayon, List<Place> innerPlaces){
-        for (OKTMOGroup selpos: rayon.innerGroups)
+    List<Place> findPlacesInRayonWithoutStreams(OKTMOGroup rayon, List<Place> innerPlaces){
+         for (OKTMOGroup selpos: rayon.innerGroups)
             for (Place place: selpos.innerPlaces) innerPlaces.add(place);
 
-        /*innerPlaces =*/ //rayon.innerGroups.stream().map(selpos->selpos.innerPlaces).map(listOfPlaces->listOfPlaces.addAll(innerPlaces));
+        //innerPlaces =rayon.innerGroups.stream().flatMap(selpos->selpos.innerPlaces.stream()).collect(Collectors.toList());
+
+        //);.map(listOfPlaces->listOfPlaces.addAll(innerPlaces));
+
         return innerPlaces;
     }
+    List<Place> findPlacesInRayon(OKTMOGroup rayon){
+        //  for (OKTMOGroup selpos: rayon.innerGroups)
+        //    for (Place place: selpos.innerPlaces) innerPlaces.add(place);
+        List<Place> innerPlaces;
+        innerPlaces =rayon.innerGroups.stream().flatMap(selpos->selpos.innerPlaces.stream()).collect(Collectors.toList());
+
+        //);.map(listOfPlaces->listOfPlaces.addAll(innerPlaces));
+
+        return innerPlaces;
+    }
+    
     String findMostPopularPlaceName(String regionName, Map<String, OKTMOGroup> namedregionsMap){
         OKTMOGroup targetGroup = new OKTMOGroup(0, "");
-        Map<String, AtomicInteger> countedPlaces = new TreeMap<>();
-        AtomicInteger count = new AtomicInteger(0);
+        //Map<String, AtomicInteger> countedPlaces = new TreeMap<>();
+        //AtomicInteger count = new AtomicInteger(0);
 
         for (Map.Entry<String, OKTMOGroup> entry : namedregionsMap.entrySet())
             if (entry.getKey().contains(regionName))
@@ -63,8 +78,33 @@ public class OktmoAnalyzer {
 
         List<Place> placesInRegion = findAllPlacesInGroupWithoutStreams(targetGroup);
 
-        for (Place place : placesInRegion)
-            countedPlaces.put(place.name, count.addAndGet(1));
+    //    Map<String, List<Place>> collect = 
+        Map<String, Long> collect = placesInRegion.stream().collect(Collectors.groupingBy(Place::getName, Collectors.counting()));
+        //for (Place place : placesInRegion)
+            //countedPlaces.put(place.name, count.addAndGet(1));
+        String mostPopularPlaceName = "";
+        long count = 0;
+        for (Map.Entry<String, Long> entry : collect.entrySet())
+            if (entry.getValue()>count) {
+            mostPopularPlaceName = entry.getKey();
+            count = entry.getValue();
+            }
+        return mostPopularPlaceName;
 
+    }
+
+    void printStatusTableForRegion(String regionName, Map<String, OKTMOGroup> namedRegionsMap){
+
+        OKTMOGroup targetGroup = new OKTMOGroup(0, "");
+        for (Map.Entry<String, OKTMOGroup> entry : namedRegionsMap.entrySet())
+            if (entry.getKey().contains(regionName))
+                targetGroup = entry.getValue();
+
+        List<Place> places = findAllPlacesInGroupWithoutStreams(targetGroup);
+        Map<String, Long> collect = places.stream().collect(Collectors.groupingBy(Place::getStatus, Collectors.counting()));
+
+        System.out.println("Статус            Количество");
+        for (Map.Entry<String, Long> entry : collect.entrySet())
+            System.out.println(entry.getKey() + "    " + entry.getValue());
     }
 }

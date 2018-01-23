@@ -17,13 +17,13 @@ public class Place extends GroupsAndPlaces{
     this.status = status;
   }
 
-  /*public String getName() {
+  public String getName() {
     return name;
   }
 
   public void setName(String name) {
     this.name = name;
-  }*/
+  }
 
   private String status;
 

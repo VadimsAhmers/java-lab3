@@ -45,7 +45,11 @@ public class OktmoMain {
 
     for (Map.Entry<String, OKTMOGroup> entry: namedRegionsMap.entrySet())
         if (entry.getKey().contains("Башкортостан"))
-            System.out.println(analyzer.findAllPlacesInGroupWithoutStreams(entry.getValue()).stream().map(place -> place.name).collect(Collectors.toList()));
+            System.out.println(analyzer.findAllPlacesInGroupWithoutStreams(entry.getValue()).stream().map(place -> place.name)
+                    .collect(Collectors.toList()));
+
+     System.out.println(analyzer.findMostPopularPlaceName("Челяб", namedRegionsMap));
+     analyzer.printStatusTableForRegion("Башк", namedRegionsMap);
 
  }
 
