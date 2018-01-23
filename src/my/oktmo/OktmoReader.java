@@ -147,7 +147,7 @@ public class OktmoReader {
 
         data.places.add(place);
 
-        if (!level3Changed) currentLevel4Group.innerGroups.add(place);
+        if (!level3Changed) currentLevel4Group.innerPlaces.add(place);
     }
 
 }

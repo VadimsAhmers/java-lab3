@@ -13,12 +13,14 @@ public class OKTMOGroup extends GroupsAndPlaces{
     }
 
     OKTMOLevel level;
-    List<GroupsAndPlaces> innerGroups;  // список групп, вложенных в данную группу
+    List<OKTMOGroup> innerGroups;  // список групп, вложенных в данную группу
+    List<Place> innerPlaces;
 
     public OKTMOGroup(long code, String name) {
         this.code = code;
         this.name = name;
         innerGroups = new ArrayList<>();
+        innerPlaces = new ArrayList<>();
     }
 }
 
